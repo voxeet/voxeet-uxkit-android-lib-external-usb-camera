@@ -1,1 +1,1 @@
-include ':app', ':libusbcamera'
+include ':app', ':uxkit-external-usb-camera'

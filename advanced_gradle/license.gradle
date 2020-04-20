@@ -1,0 +1,10 @@
+apply plugin: 'com.jaredsburrows.license'
+
+licenseReport {
+    generateHtmlReport = false
+    generateJsonReport = true
+
+    // These options are ignored for Java projects
+    copyHtmlReportToAssets = false
+    copyJsonReportToAssets = false
+}

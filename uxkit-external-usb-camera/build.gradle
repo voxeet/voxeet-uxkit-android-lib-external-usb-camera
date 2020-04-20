@@ -1,14 +1,20 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.github.jiangdongguo'
 
 android {
     compileSdkVersion rootProject.ext.versionCompiler
     defaultConfig {
-        applicationId "com.jiangdg.usbcamera"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.versionTarget
-        versionCode rootProject.ext.versionCode
+        versionCode 2
         versionName rootProject.ext.versionNameString
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
     }
     buildTypes {
         release {
@@ -16,19 +22,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    // solving com.android.tools.r8.CompilationFailedException: Compilation failed to complete
+
     compileOptions {
         sourceCompatibility rootProject.ext.javaSourceCompatibility
         targetCompatibility rootProject.ext.javaTargetCompatibility
     }
 }
 
-dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-
-    implementation 'com.jakewharton:butterknife:7.0.1'
-    annotationProcessor 'com.jakewharton:butterknife:7.0.1'
-
-    implementation project(':uxkit-external-usb-camera')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+configurations {
+    javadocDeps
 }
+
+dependencies {
+    api ("com.voxeet.sdk:public-sdk:2.3.1") { transitive = true }
+}
+
+
+apply from: "../advanced_gradle/license.gradle"
+apply from: "../advanced_gradle/tasks.gradle"
