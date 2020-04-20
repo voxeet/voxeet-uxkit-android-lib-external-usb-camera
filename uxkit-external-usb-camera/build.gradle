@@ -1,15 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = 'com.github.jiangdongguo'
-
 android {
-    compileSdkVersion rootProject.ext.versionCompiler
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.versionTarget
-        versionCode 2
-        versionName rootProject.ext.versionNameString
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         ndk {
@@ -38,5 +36,6 @@ dependencies {
 }
 
 
+apply from: rootProject.ext.uploadScriptFile.toString()
 apply from: "../advanced_gradle/license.gradle"
 apply from: "../advanced_gradle/tasks.gradle"

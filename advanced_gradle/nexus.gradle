@@ -1,0 +1,36 @@
+apply plugin: 'com.bmuschko.nexus'
+
+modifyPom {
+    project {
+        name project.name
+        description "UXkit External USB Camera :: ${project.name}"
+        inceptionYear "2020"
+
+        licenses {
+            license {
+                name 'Dolby'
+                url ''
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'klepe'
+                name 'Kevin Le perf'
+                email 'kevin.leperf@dolby.com'
+            }
+        }
+    }
+}
+
+extraArchive {
+    sources = true
+    tests = false
+    javadoc = false
+}
+
+nexus {
+    sign = false
+    repositoryUrl = rootProject.ext.uploadNexus
+}

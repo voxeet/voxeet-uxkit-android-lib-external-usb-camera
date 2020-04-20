@@ -1,0 +1,15 @@
+apply plugin: 'com.jfrog.bintray'
+
+bintray {
+    user = project.properties["VOXEET_DEVELOPER_ID"]
+    key = project.properties["BINTRAY_API_KEY"]
+    configurations = ['archives']
+    pkg {
+        userOrg = project.properties["VOXEET_MAIN_DEVELOPER_ID"]
+        repo = project.properties["VOXEET_SDK_BINTRAY_REPO"] //"maven"
+        name = rootProject.ext.groupId
+        publicDownloadNumbers = true
+        publish = true
+    }
+}
+

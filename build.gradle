@@ -1,3 +1,13 @@
+def version_sdk = { String version ->  project.hasProperty("CICD_BUILD_ID") && project.CICD_BUILD_ID.size() > 0
+        ? "${version}-${project.CICD_BUILD_ID}"
+        : "${version}" }
+
+def version_module = { String version ->  project.hasProperty("CICD_BUILD_ID") && project.CICD_BUILD_ID.size() > 0
+        ? "${version}-${project.CICD_BUILD_ID}"
+        : "${version}" }
+
+def maven_url = project.hasProperty("MAVEN") && project.MAVEN.size() > 0 ? project.MAVEN : "http://dl.bintray.com/voxeet/maven/"
+
 buildscript {
     repositories {
         google()
@@ -7,6 +17,8 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.6.2'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath 'com.jaredsburrows:gradle-license-plugin:0.8.70'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
@@ -15,19 +27,63 @@ allprojects {
         google()
         jcenter()
         mavenLocal()
+        maven { url maven_url }
     }
+}
+
+ext {
+    buildToolsVersion = "28.0.3"
+    minSdkVersion = 16
+    compileSdkVersion = 28
+    targetSdkVersion = 28
+
+    groupId = "com.voxeet.sdk"
+    versionCode = 1
+    versionName = version_module("1.0")
+    voxeetSdk = version_sdk("2.3.1")
+    javaSourceCompatibility = JavaVersion.VERSION_1_8
+    javaTargetCompatibility = JavaVersion.VERSION_1_8
+
+    internal = project.hasProperty("INTERNAL_RELEASE")
+    uploadNexus = project.hasProperty("INTERNAL_RELEASE") ? project.INTERNAL_RELEASE : null
+    uploadScriptFile = new File(rootProject.projectDir, "advanced_gradle/${internal ? "nexus.gradle" : "bintray.gradle" }")
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-ext {
-    versionCompiler = 28
-    versionTarget = 27
-    minSdkVersion = 16
-    versionCode = 1
-    versionNameString = "1.0"
-    javaSourceCompatibility = JavaVersion.VERSION_1_8
-    javaTargetCompatibility = JavaVersion.VERSION_1_8
+def modules_sdk = [ 'uxkit-external-usb-camera' ]
+
+task cleanAll {
+    dependsOn = modules_sdk.collect { ":${it}:clean" }
 }
+
+task assembleAll {
+    dependsOn = modules_sdk.collect { ":${it}:assembleRelease" }
+}
+
+task licenseAll {
+    dependsOn = modules_sdk.collect { ":${it}:licenseReleaseReport" }
+
+    modules_sdk.collect { "${it}/src/main/assets" }
+            .each { folder -> new File(folder).mkdirs() }
+
+    modules_sdk.each { name ->
+        def report = "${name}/build/reports/licenses/licenseReleaseReport.json"
+        def new_report = "${name}/build/reports/licenses/${name}.json"
+        new File(report).renameTo(new File(new_report))
+
+        copy { from new_report into "${name}/src/main/assets/" }
+    }
+}
+
+task installAll {
+    dependsOn = modules_sdk.collect { ":${it}:install" }
+}
+
+task uploadAll {
+    dependsOn = modules_sdk.collect { it + (project.ext.internal ? ':uploadArchives' : ':bintrayUpload') }
+}
+
+apply from: "./advanced_gradle/license.gradle"

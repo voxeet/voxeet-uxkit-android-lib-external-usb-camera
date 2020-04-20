@@ -1,14 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.versionCompiler
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.jiangdg.usbcamera"
+        applicationId "com.voxeet.usbcamera"
         minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.versionTarget
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionNameString
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionName rootProject.ext.versionName
     }
     buildTypes {
         release {
