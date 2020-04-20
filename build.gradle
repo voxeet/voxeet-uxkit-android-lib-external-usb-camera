@@ -40,7 +40,7 @@ ext {
     groupId = "com.voxeet.sdk"
     versionCode = 1
     versionName = version_module("1.0")
-    voxeetSdk = version_sdk("2.3.1")
+    voxeetSdk = version_sdk("2.3.1-BETA-1")
     javaSourceCompatibility = JavaVersion.VERSION_1_8
     javaTargetCompatibility = JavaVersion.VERSION_1_8
 
