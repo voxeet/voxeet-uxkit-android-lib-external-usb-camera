@@ -56,16 +56,13 @@ mCameraHelper.getModelValue(UVCCameraHelper.MODE_BRIGHTNESS);
 mCameraHelper.getModelValue(UVCCameraHelper.MODE_CONTRAST);
 ...
 ```
-![Connecting gif](https://github.com/jiangdongguo/AndroidUSBCamera/blob/master/gifs/brightness.gif)
-(5) switch resolutions and camera.  
+
 ```java
 mCameraHelper.updateResolution(widht, height);
 ```
-![Connecting gif](https://github.com/jiangdongguo/AndroidUSBCamera/blob/master/gifs/2.1.0.gif)  
-At last,remember adding permissions:  
+
 ```xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<uses-permission android:name="android.permission.RECORD_AUDIO" />  
 ```
 
 

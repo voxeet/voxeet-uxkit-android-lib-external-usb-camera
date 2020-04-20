@@ -32,7 +32,7 @@ configurations {
 }
 
 dependencies {
-    api ("com.voxeet.sdk:public-sdk:2.3.1") { transitive = true }
+    api ("com.voxeet.sdk:public-sdk:${rootProject.ext.voxeetSdk}") { transitive = true }
 }
 
 
