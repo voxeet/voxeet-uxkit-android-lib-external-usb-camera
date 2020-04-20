@@ -30,4 +30,4 @@ build_install:
 snapshot_upload:
   stage: deploy
   script:
-    - ./gradlew -PINTERNAL_RELEASE="${MAVEN_NEXUS_REPOSITORY_URL}" -PCICD_BUILD_ID="SNAPSHOT" :uploadAll
+    - ./gradlew -PINTERNAL_RELEASE="${MAVEN_NEXUS_REPOSITORY_URL}" -PCICD_BUILD_ID="SNAPSHOT" -PCICD_SDK_SUFFIX="BETA-1" :uploadAll

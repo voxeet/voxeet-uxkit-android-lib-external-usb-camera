@@ -1,5 +1,5 @@
-def version_sdk = { String version ->  project.hasProperty("CICD_BUILD_ID") && project.CICD_BUILD_ID.size() > 0
-        ? "${version}-${project.CICD_BUILD_ID}"
+def version_sdk = { String version ->  project.hasProperty("CICD_SDK_SUFFIX") && project.CICD_SDK_SUFFIX.size() > 0
+        ? "${version}-${project.CICD_SDK_SUFFIX}"
         : "${version}" }
 
 def version_module = { String version ->  project.hasProperty("CICD_BUILD_ID") && project.CICD_BUILD_ID.size() > 0
