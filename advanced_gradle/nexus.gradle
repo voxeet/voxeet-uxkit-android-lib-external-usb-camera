@@ -33,4 +33,5 @@ extraArchive {
 nexus {
     sign = false
     repositoryUrl = rootProject.ext.uploadNexus
+    snapshotRepositoryUrl = rootProject.ext.uploadNexus
 }
