@@ -9,3 +9,7 @@
 /captures
 .externalNativeBuild
 .tags*
+
+*.o
+*.d
+*.a
