@@ -46,19 +46,19 @@ public abstract class AbstractUVCCameraHandler extends Handler {
 
     // 对外回调接口
     public interface CameraCallback {
-        public void onOpen();
+        void onOpen();
 
-        public void onClose();
+        void onClose();
 
-        public void onStartPreview();
+        void onStartPreview();
 
-        public void onStopPreview();
+        void onStopPreview();
 
-        public void onStartRecording();
+        void onStartRecording();
 
-        public void onStopRecording();
+        void onStopRecording();
 
-        public void onError(final Exception e);
+        void onError(final Exception e);
     }
 
     public static OnEncodeResultListener mListener;
@@ -614,7 +614,7 @@ public abstract class AbstractUVCCameraHandler extends Handler {
             try {
                 final Constructor<? extends AbstractUVCCameraHandler> constructor = mHandlerClass.getDeclaredConstructor(CameraThread.class);
                 handler = constructor.newInstance(this);
-            } catch (final NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            } catch (final Throwable e) {
                 Log.w(TAG, e);
             }
             if (handler != null) {

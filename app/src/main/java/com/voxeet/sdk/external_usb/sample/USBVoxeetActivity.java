@@ -21,7 +21,7 @@ import com.voxeet.sdk.events.v2.ParticipantUpdatedEvent;
 import com.voxeet.sdk.events.v2.StreamAddedEvent;
 import com.voxeet.sdk.events.v2.StreamRemovedEvent;
 import com.voxeet.sdk.events.v2.StreamUpdatedEvent;
-import com.voxeet.sdk.external_usb.R;
+import com.voxeet.sdk.external_usb.camera.ExternalCameraCapturerProvider;
 import com.voxeet.sdk.json.ParticipantInfo;
 import com.voxeet.sdk.models.Conference;
 import com.voxeet.sdk.models.Participant;
