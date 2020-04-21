@@ -33,8 +33,9 @@ jobs:
         pathSource: ./android-ndk-r14b.zip
         pathTarget: .
     - run: ls .
+    - run: export PWD=`pwd` ; echo "ndk.dir=$PWD/android-ndk-r14b" >> local.properties ; chmod +x $PWD/android-ndk-r14b/ndk-build
     - run: echo "ndk.dir=./android-ndk-r14b" >> local.properties
-    - run: chmod +x ./gradlew && ./gradlew :assembleAll && ./gradlew :installAll
+    - run: chmod +x ./gradlew && ./gradlew :assembleAll --debug && ./gradlew :installAll
     - run: cp -r ~/.m2/* .
     - uses: actions/upload-artifact@v1
       with:
