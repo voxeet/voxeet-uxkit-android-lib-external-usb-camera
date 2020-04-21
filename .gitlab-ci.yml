@@ -21,7 +21,7 @@ snapshot_upload:
   stage: deploy
   script:
     - wget --quiet --output-document=android-ndk_compat.zip https://dl.google.com/android/repository/${ANDROID_NDK}-linux-x86_64.zip
-    - unzip android-ndk_compat.zip
+    - unzip android-ndk_compat.zip > /dev/null
     - echo "ndk.dir=$PWD/${ANDROID_NDK}" > local.properties
     - ./gradlew :cleanAll
     - mkdir -p repository/com/voxeet/sdk
