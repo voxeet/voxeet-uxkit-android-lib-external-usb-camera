@@ -1,0 +1,41 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Cache Gradle packages
+      uses: actions/cache@v1
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+        restore-keys: ${{ runner.os }}-gradle
+    - name: wget
+      uses: wei/wget@v1
+      with:
+        args: -O android-ndk-r14b.zip https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip
+    - name: extract-7z-action
+      uses: DuckSoft/extract-7z-action@v1.0
+      with:
+        pathSource: ./android-ndk-r14b-linux-x86_64.zip
+        pathTarget: .
+    - run: echo "ndk.dir=./android-ndk-r14b/" >> local.properties
+    - run: ./gradlew :assembleAll && ./gradlew :installAll
+    - run: cp -r ~/.m2/* .
+    - uses: actions/upload-artifact@v1
+      with:
+        name: Package
+        path: repository
