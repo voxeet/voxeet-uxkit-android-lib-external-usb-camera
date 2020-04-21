@@ -30,7 +30,7 @@ jobs:
     - name: extract-7z-action
       uses: DuckSoft/extract-7z-action@v1.0
       with:
-        pathSource: ./android-ndk-r14b-linux-x86_64.zip
+        pathSource: ./android-ndk-r14b.zip
         pathTarget: .
     - run: echo "ndk.dir=./android-ndk-r14b/" >> local.properties
     - run: ./gradlew :assembleAll && ./gradlew :installAll
