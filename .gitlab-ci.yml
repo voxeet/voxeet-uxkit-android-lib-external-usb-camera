@@ -21,12 +21,12 @@ snapshot_upload:
   stage: deploy
   script:
     - wget --quiet --output-document=android-ndk_compat.zip https://dl.google.com/android/repository/${ANDROID_NDK}-linux-x86_64.zip
-    - unzip android-ndk_compat.zip > /dev/null
+    - unzip -o android-ndk_compat.zip > /dev/null
     - echo "ndk.dir=$PWD/${ANDROID_NDK}" > local.properties
     - ./gradlew :cleanAll
+    - ./gradlew -PINTERNAL_RELEASE="${MAVEN_NEXUS_REPOSITORY_URL}" -PCICD_BUILD_ID="SNAPSHOT" :uploadAll
     - mkdir -p repository/com/voxeet/sdk
     - cp -r ~/.m2/repository/* repository/
-    - ./gradlew -PINTERNAL_RELEASE="${MAVEN_NEXUS_REPOSITORY_URL}" -PCICD_BUILD_ID="SNAPSHOT" :uploadAll
   artifacts:
     paths:
       - ./repository
