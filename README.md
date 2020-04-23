@@ -26,7 +26,6 @@ Activity activity = /*direct activity reference, used for the PermissionScreen a
 ExternalCameraCapturerProvider provider = new ExternalCameraCapturerProvider(activity);
 ```
 
-
 ```java
 VoxeetSDK.screenShare().startCustomScreenShare(provider).then(result -> {
     //anything here
@@ -41,7 +40,27 @@ _The following documentation reflect the current internal implementation of the 
 
 It can and will probably diverge from the original project.
 
-Internally
+### toBitmap
+
+It's possible to get the next frame in Bitmap format (warning : need to be recycled)
+The call will timeout after 5s if no frames are received
+
+Following the previously initialized `ExternalCameraCapturerProvider` instance
+```java
+
+ExternalCameraCapturerProvider provider = new ExternalCameraCapturerProvider(activity);
+int width = provider.getWidth(); //recommended
+int height = provider.getHeight(); //recommended
+
+provider.toBitmap(width, height).then(bitmap -> {
+    //anything here
+}).error(error -> {
+    //anything here
+});
+```
+
+
+### Internally
 
 ```java
 UVCCameraHelper cameraHelper = UVCCameraHelper.getInstance();

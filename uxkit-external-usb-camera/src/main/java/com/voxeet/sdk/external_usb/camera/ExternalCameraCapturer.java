@@ -3,13 +3,19 @@ package com.voxeet.sdk.external_usb.camera;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Surface;
 import android.widget.Toast;
 
 import com.jiangdg.usbcamera.UVCCameraHelper;
 import com.serenegiant.usb.widget.ExternalCameraInterface;
+import com.voxeet.promise.Promise;
+import com.voxeet.promise.solve.Solver;
+import com.voxeet.promise.solve.ThenVoid;
 
 import org.webrtc.CapturerObserver;
 import org.webrtc.SurfaceTextureHelper;
@@ -21,6 +27,7 @@ import org.webrtc.VideoSink;
 import javax.annotation.Nullable;
 
 public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
+    private final static Handler handler = new Handler(Looper.getMainLooper());
     private final Activity activity;
 
     private int width;
@@ -31,6 +38,7 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
     private CapturerObserver capturerObserver;
     private long numCapturedFrames;
     private boolean isDisposed;
+    private Solver<Bitmap> waitForFrameSolver = null;
 
     UVCCameraHelper cameraHelper = UVCCameraHelper.getInstance();
     private ExternalCameraInterface externalCameraInterface = new ExternalCameraInterface() {
@@ -63,12 +71,6 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
         public boolean hasSurface() {
             return null != surface;
         }
-
-        @Override
-        public Bitmap captureStillImage(int width, int height) {
-            return null;
-        }
-
     };
 
     private Surface surface;
@@ -104,6 +106,7 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
         }
     };
     private boolean isRequest = false;
+    private Point waitForFrameSolverSize;
 
     public ExternalCameraCapturer(Activity activity, int width, int height) {
         cameraHelper.setDefaultPreviewSize(width, height);
@@ -196,6 +199,14 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
     public void onFrame(VideoFrame frame) {
         numCapturedFrames++;
         capturerObserver.onFrameCaptured(frame);
+
+        if (null != frame && null != waitForFrameSolver) {
+            Solver<Bitmap> temp = waitForFrameSolver;
+            waitForFrameSolver = null;
+            FrameBitmapHelper.toBitmap(frame, waitForFrameSolverSize.x, waitForFrameSolverSize.y, false)
+                    .then((ThenVoid<Bitmap>) temp::resolve)
+                    .error(temp::reject);
+        }
     }
 
     @Override
@@ -205,6 +216,20 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
 
     public long getNumCapturedFrames() {
         return numCapturedFrames;
+    }
+
+    Promise<Bitmap> toBitmap(int width, int height) {
+        if (null != waitForFrameSolver)
+            return Promise.reject(new IllegalStateException("already waiting for frame"));
+
+        return new Promise<>(solver -> {
+            handler.postDelayed(() -> {
+                if (null != waitForFrameSolver) waitForFrameSolver = null;
+            }, 5000);
+
+            waitForFrameSolverSize = new Point(width, height);
+            waitForFrameSolver = solver;
+        });
     }
 }
 

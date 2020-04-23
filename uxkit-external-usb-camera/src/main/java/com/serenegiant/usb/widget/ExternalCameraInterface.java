@@ -23,11 +23,10 @@
 
 package com.serenegiant.usb.widget;
 
-import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.view.Surface;
 
-public interface ExternalCameraInterface /*extends IAspectRatioView*/ {
+public interface ExternalCameraInterface  {
     interface Callback {
         void onSurfaceCreated(ExternalCameraInterface view, Surface surface);
 
@@ -47,6 +46,4 @@ public interface ExternalCameraInterface /*extends IAspectRatioView*/ {
     Surface getSurface();
 
     boolean hasSurface();
-
-    Bitmap captureStillImage(int width, int height);
 }
