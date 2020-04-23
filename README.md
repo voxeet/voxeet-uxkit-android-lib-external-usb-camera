@@ -13,9 +13,33 @@ dependencies {
 
 ```
 
-## Usage
+## Usage in Voxeet's Context
+
+After a conference have been joined, make sure the device is unplugged (currently no chcek for pre-attached device), start a custom screenShare using the following snippet.
+
+Then plug in the device and validate the "use usb" dialog. After a short time, the frames will be displayed.
+
+_note : when starting the screenshare, until the device is plugged in, no frames will be sent, it is then currently normal to have a screenshare session without anything displayed_
+
+```java
+Activity activity = /*direct activity reference, used for the PermissionScreen and provide Context information*/;
+ExternalCameraCapturerProvider provider = new ExternalCameraCapturerProvider(activity);
+```
+
+
+```java
+VoxeetSDK.screenShare().startCustomScreenShare(provider).then(result -> {
+    //anything here
+}).error(error -> {
+    //anything here
+});
+```
+
+## Usage (internal)
 
 _The following documentation reflect the current internal implementation of the ExternalCameraCapturerProvider()_
+
+It can and will probably diverge from the original project.
 
 Internally
 
@@ -87,8 +111,20 @@ Send the failed-device.txt in the /sdcard/UsbCamera/failed-device.txt
 - remove unecessary classes for this library's purpose. Those are still and will remain in the commit's hierarchy
 - unbranch from original repository
 
-License
--------
+## Contributing
+
+For open source related reasons, the current repository states embeds the sources from the original UVCCamera repository to make sure everyone can check, compile and regenerate every binaries embedded in the library.
+
+Contributing can be done via fork followed by pull requests.
+
+To make sure a pull request won't be cancelled, it must follows those steps :
+
+- the code quality should follow the standards IntelliJ/Android Studio format
+- the code must be commented
+- only one feature should be present in the mull request
+- avoid modifications in a number of files too high
+
+## License
 
     Copyright 2020 Voxeet
 
