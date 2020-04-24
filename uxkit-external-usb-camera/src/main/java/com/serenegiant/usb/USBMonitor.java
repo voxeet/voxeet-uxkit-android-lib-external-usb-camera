@@ -33,6 +33,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -532,12 +533,7 @@ public final class USBMonitor {
 				if (mOnDeviceConnectListener != null) {
 					for (int i = 0; i < n; i++) {
 						final UsbDevice device = devices.get(i);
-						mAsyncHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								mOnDeviceConnectListener.onAttach(device);
-							}
-						});
+						mAsyncHandler.post(() -> mOnDeviceConnectListener.onAttach(device));
 					}
 				}
 			}
@@ -1241,9 +1237,11 @@ public final class USBMonitor {
 				final int n = device.getInterfaceCount();
 				for (int i = 0; i < n; i++) {
 					final UsbInterface temp = device.getInterface(i);
-					if ((temp.getId() == interface_id) && (temp.getAlternateSetting() == altsetting)) {
-						intf = temp;
-						break;
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+						if ((temp.getId() == interface_id) && (temp.getAlternateSetting() == altsetting)) {
+							intf = temp;
+							break;
+						}
 					}
 				}
 				if (intf != null) {
@@ -1329,12 +1327,6 @@ public final class USBMonitor {
 			}
 			return super.equals(o);
 		}
-
-//		@Override
-//		protected void finalize() throws Throwable {
-///			close();
-//			super.finalize();
-//		}
 
 		private synchronized void checkConnection() throws IllegalStateException {
 			if (mConnection == null) {
