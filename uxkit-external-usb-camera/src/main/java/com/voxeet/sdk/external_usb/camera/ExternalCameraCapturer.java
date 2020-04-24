@@ -177,13 +177,14 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
             cameraHelper.stopPreview();
             cameraHelper.unregisterUSB();
             cameraHelper.release();
+
+            isDisposed = true;
         });
     }
 
     @Override
     public synchronized void dispose() {
-        cameraHelper.release();
-        isDisposed = true;
+        //dispose can be called internally
     }
 
     @Override
