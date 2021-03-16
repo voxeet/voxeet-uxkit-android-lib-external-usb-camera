@@ -9,7 +9,6 @@ import android.hardware.usb.UsbDevice;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.Surface;
-import android.widget.Toast;
 
 import com.jiangdg.usbcamera.UVCCameraHelper;
 import com.serenegiant.usb.widget.ExternalCameraInterface;
@@ -78,11 +77,15 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
         @Override
         public void onAttachDev(UsbDevice device) {
             // request open permission(must have)
-            if (!isRequest) {
-                isRequest = true;
-                if (cameraHelper != null) {
-                    cameraHelper.requestPermission(0);
+            try {
+                if (!isRequest) {
+                    isRequest = true;
+                    if (cameraHelper != null) {
+                        cameraHelper.requestPermission(0, device);
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -115,12 +118,6 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
         this.height = height;
 
         this.activity = activity;
-
-        toast("constructor");
-    }
-
-    private void toast(String t) {
-        Toast.makeText(activity, t, Toast.LENGTH_SHORT).show();
     }
 
     private void checkNotDisposed() {
@@ -132,7 +129,6 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
     @Override
     public synchronized void initialize(final SurfaceTextureHelper surfaceTextureHelper,
                                         final Context applicationContext, final CapturerObserver capturerObserver) {
-        toast("initialize");
         checkNotDisposed();
 
         if (capturerObserver == null) {
@@ -153,7 +149,6 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
     @Override
     public synchronized void startCapture(
             final int width, final int height, final int ignoredFramerate) {
-        toast("startCapture");
         checkNotDisposed();
 
         cameraHelper.initUSBMonitor(activity, externalCameraInterface, listener);
@@ -168,7 +163,6 @@ public class ExternalCameraCapturer implements VideoCapturer, VideoSink {
 
     @Override
     public synchronized void stopCapture() {
-        toast("stopCapturer");
         checkNotDisposed();
         ThreadUtils.invokeAtFrontUninterruptibly(surfaceTextureHelper.getHandler(), () -> {
             surfaceTextureHelper.stopListening();
