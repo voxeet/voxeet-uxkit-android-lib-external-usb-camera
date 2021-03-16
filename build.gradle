@@ -1,10 +1,14 @@
-def version_sdk = { String version ->  project.hasProperty("CICD_SDK_SUFFIX") && project.CICD_SDK_SUFFIX.size() > 0
-        ? "${version}-${project.CICD_SDK_SUFFIX}"
-        : "${version}" }
+def version_sdk = { String version ->
+    project.hasProperty("CICD_SDK_SUFFIX") && project.CICD_SDK_SUFFIX.size() > 0
+            ? "${version}-${project.CICD_SDK_SUFFIX}"
+            : "${version}"
+}
 
-def version_module = { String version ->  project.hasProperty("CICD_BUILD_ID") && project.CICD_BUILD_ID.size() > 0
-        ? "${version}-${project.CICD_BUILD_ID}"
-        : "${version}" }
+def version_module = { String version ->
+    project.hasProperty("CICD_BUILD_ID") && project.CICD_BUILD_ID.size() > 0
+            ? "${version}-${project.CICD_BUILD_ID}"
+            : "${version}"
+}
 
 def maven_url = project.hasProperty("MAVEN") && project.MAVEN.size() > 0 ? project.MAVEN : "http://dl.bintray.com/voxeet/maven/"
 
@@ -24,6 +28,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url "https://android-sdk.voxeet.com/release" }
         google()
         jcenter()
         mavenLocal()
@@ -32,28 +37,28 @@ allprojects {
 }
 
 ext {
-    buildToolsVersion = "28.0.3"
-    minSdkVersion = 16
-    compileSdkVersion = 28
-    targetSdkVersion = 28
+    buildToolsVersion = "29.0.3"
+    minSdkVersion = 21
+    compileSdkVersion = 29
+    targetSdkVersion = 29
 
     groupId = "com.voxeet.sdk"
     versionCode = 1
-    versionName = version_module("1.0")
-    voxeetSdk = version_sdk("2.3.1-BETA-1")
+    versionName = version_module("3.1.2")
+    voxeetSdk = version_sdk("3.1.2")
     javaSourceCompatibility = JavaVersion.VERSION_1_8
     javaTargetCompatibility = JavaVersion.VERSION_1_8
 
     internal = project.hasProperty("INTERNAL_RELEASE")
     uploadNexus = project.hasProperty("INTERNAL_RELEASE") ? project.INTERNAL_RELEASE : null
-    uploadScriptFile = new File(rootProject.projectDir, "advanced_gradle/${internal ? "nexus.gradle" : "bintray.gradle" }")
+    uploadScriptFile = new File(rootProject.projectDir, "advanced_gradle/${internal ? "nexus.gradle" : "bintray.gradle"}")
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-def modules_sdk = [ 'uxkit-external-usb-camera' ]
+def modules_sdk = ['uxkit-external-usb-camera']
 
 task cleanAll {
     dependsOn = modules_sdk.collect { ":${it}:clean" }

@@ -199,16 +199,17 @@ public class UVCCameraHelper {
         return mCameraHandler != null ? mCameraHandler.resetValue(flag) : 0;
     }
 
-    public void requestPermission(int index) {
+    public void requestPermission(int index, UsbDevice usbDevice) {
         List<UsbDevice> devList = getUsbDeviceList();
-        if (devList == null || devList.size() == 0) {
+
+        if (null == usbDevice && (devList == null || devList.size() == 0)) {
             return;
         }
         int count = devList.size();
-        if (index >= count)
+        if (null == usbDevice && index >= count)
             new IllegalArgumentException("index illegal,should be < devList.size()");
         if (mUSBMonitor != null) {
-            mUSBMonitor.requestPermission(getUsbDeviceList().get(index));
+            mUSBMonitor.requestPermission(null == usbDevice ? getUsbDeviceList().get(index) : usbDevice);
         }
     }
 

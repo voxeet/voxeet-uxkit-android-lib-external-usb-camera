@@ -1,9 +1,11 @@
 package com.voxeet.sdk.external_usb.sample;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -25,7 +27,6 @@ import com.voxeet.sdk.external_usb.camera.ExternalCameraCapturerProvider;
 import com.voxeet.sdk.json.ParticipantInfo;
 import com.voxeet.sdk.models.Conference;
 import com.voxeet.sdk.models.Participant;
-import com.voxeet.sdk.models.v1.CreateConferenceResult;
 import com.voxeet.sdk.services.conference.information.ConferenceInformation;
 import com.voxeet.sdk.utils.Map;
 import com.voxeet.sdk.utils.Opt;
@@ -82,11 +83,19 @@ public class USBVoxeetActivity extends AppCompatActivity {
         //adding the user_name, login and logout views related to the open/close and conference flow
         add(views, R.id.login);
         add(views, R.id.logout);
+        add(views, R.id.user_name);
+        add(views, R.id.join);
+        add(views, R.id.leave);
+        add(views, R.id.startVideo);
+        add(views, R.id.stopVideo);
 
         add(buttonsNotLoggedIn, R.id.login);
         add(buttonsNotLoggedIn, R.id.user_name);
 
         add(buttonsInConference, R.id.logout);
+        add(buttonsInConference, R.id.leave);
+        add(buttonsInConference, R.id.startVideo);
+        add(buttonsInConference, R.id.stopVideo);
 
         add(buttonsNotInConference, R.id.logout);
 
@@ -178,7 +187,7 @@ public class USBVoxeetActivity extends AppCompatActivity {
     @OnClick(R.id.join)
     public void onJoin() {
         VoxeetSDK.conference().create(conference_name.getText().toString())
-                .then((ThenPromise<CreateConferenceResult, Conference>) res -> VoxeetSDK.conference().join(res.conferenceId))
+                .then((ThenPromise<Conference, Conference>) res -> VoxeetSDK.conference().join(res.getId()))
                 .then(conference -> {
                     Toast.makeText(USBVoxeetActivity.this, "started...", Toast.LENGTH_SHORT).show();
                     updateViews();
@@ -194,17 +203,13 @@ public class USBVoxeetActivity extends AppCompatActivity {
 
     @OnClick(R.id.startVideo)
     public void onStartVideo() {
-        VoxeetSDK.conference().startVideo()
-                .then((ThenPromise<Boolean, Boolean>) aBoolean -> VoxeetSDK.screenShare().startCustomScreenShare(new ExternalCameraCapturerProvider(USBVoxeetActivity.this)))
+        VoxeetSDK.screenShare().startCustomScreenShare(new ExternalCameraCapturerProvider(USBVoxeetActivity.this))
                 .then((result, solver) -> updateViews())
                 .error(error());
     }
 
     @OnClick(R.id.stopVideo)
     public void onStopVideo() {
-        VoxeetSDK.conference().stopVideo()
-                .then((result, solver) -> updateViews())
-                .error(error());
         VoxeetSDK.screenShare().stopScreenShare()
                 .then((result, solver) -> updateViews())
                 .error(error());
@@ -237,15 +242,20 @@ public class USBVoxeetActivity extends AppCompatActivity {
 
     private void updateStreams() {
         for (Participant user : VoxeetSDK.conference().getParticipants()) {
-            boolean isLocal = user.getId().equals(VoxeetSDK.session().getParticipantId());
-            MediaStream stream = user.streamsHandler().getFirst(MediaStreamType.Camera);
+            checkStreamForParticipant(user);
+        }
+    }
 
-            VideoView video = isLocal ? this.video : this.videoOther;
+    private void checkStreamForParticipant(@Nullable Participant user) {
+        boolean isLocal = user.getId().equals(VoxeetSDK.session().getParticipantId());
+        MediaStream stream = user.streamsHandler().getFirst(MediaStreamType.ScreenShare);
 
-            if (null != stream && !stream.videoTracks().isEmpty()) {
-                video.setVisibility(View.VISIBLE);
-                video.attach(user.getId(), stream);
-            }
+        VideoView video = isLocal ? this.video : this.videoOther;
+
+        if (null != stream && !stream.videoTracks().isEmpty()) {
+            video.setVisibility(View.VISIBLE);
+            video.attach(user.getId(), stream);
+            video.setBackgroundColor(getResources().getColor(R.color.colorBlack));
         }
     }
 

@@ -44,7 +44,6 @@ configurations {
 }
 
 
-
 tasks.withType(JavaCompile) {
     compileTask -> compileTask.dependsOn ndkBuild
 }
@@ -77,7 +76,7 @@ task ndkClean(type: Exec, description: 'clean JNI libraries') {
 clean.dependsOn 'ndkClean'
 
 dependencies {
-    api ("com.voxeet.sdk:public-sdk:${rootProject.ext.voxeetSdk}") { transitive = true }
+    api("com.voxeet.sdk:sdk:${rootProject.ext.voxeetSdk}") { transitive = true }
 }
 
 apply from: rootProject.ext.uploadScriptFile.toString()
