@@ -8,7 +8,7 @@ Supporting Android 5.0+
 
 ```java
 dependencies {
-	implementation "com.voxeet.sdk:uxkit-external-usb-camera:0.0.1"
+	implementation "com.voxeet.sdk:uxkit-external-usb-camera:3.1.2"
 }
 
 ```
@@ -123,6 +123,12 @@ Send the failed-device.txt in the /sdcard/UsbCamera/failed-device.txt
 
 
 ## Changelog
+
+#### 2021/04/15
+
+- bump this library to SDK 3.1.2
+- align version altogether
+- fix an issue which prevented presenters to attach screenshare onto their own device
 
 #### 2020/04/20
 
