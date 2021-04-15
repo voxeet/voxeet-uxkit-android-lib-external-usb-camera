@@ -1,3 +1,1 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.voxeet.sdk.external_usb">
-</manifest>
+<manifest package="com.voxeet.sdk.external_usb"></manifest>

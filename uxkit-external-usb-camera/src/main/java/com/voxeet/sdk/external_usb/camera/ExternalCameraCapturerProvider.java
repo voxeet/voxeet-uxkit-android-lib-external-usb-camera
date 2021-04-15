@@ -2,49 +2,56 @@ package com.voxeet.sdk.external_usb.camera;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 
+import com.voxeet.android.media.utils.VideoCapturerBundle;
 import com.voxeet.android.media.utils.VideoCapturerProvider;
 import com.voxeet.promise.Promise;
 
-import org.webrtc.CameraVideoCapturer;
 import org.webrtc.VideoCapturer;
 
 import javax.annotation.Nullable;
 
-public class ExternalCameraCapturerProvider implements VideoCapturerProvider {
+public class ExternalCameraCapturerProvider extends VideoCapturerProvider {
 
     private Activity activity;
     private ExternalCameraCapturer capturer;
 
     public ExternalCameraCapturerProvider(Activity activity) {
         this.activity = activity;
+
+        constraints = new Constraints(640, 480, 30);
     }
 
     @Nullable
     @Override
-    public ExternalCameraCapturer createVideoCapturer(@Nullable String s) {
-        capturer = new ExternalCameraCapturer(activity, getWidth(), getHeight());
-        return capturer;
+    public VideoCapturerBundle createVideoCapturer(@Nullable String optionalName) {
+        capturer = new ExternalCameraCapturer(activity, constraints.width, constraints.height);
+
+        //TODO SDK : let the bundle to be overriden for the expected class !
+        VideoCapturerBundle bundle = new VideoCapturerBundle(null,
+                constraints.width,
+                constraints.height,
+                constraints.frameRate);
+        bundle.videoCapturer = capturer;
+
+        return bundle;
+    }
+
+    @NonNull
+    @Override
+    public void onVideoCapturerDisposed(@NonNull VideoCapturer videoCapturer) {
+        capturer = null;
     }
 
     @Override
-    public int getWidth() {
-        return 640;
+    public boolean changeCaptureFormat(int width, int height, int fps) {
+        return false;
     }
 
     @Override
-    public int getHeight() {
-        return 480;
-    }
+    public void clear() {
 
-    @Override
-    public int getFrameRate() {
-        return 30;
-    }
-
-    @Override
-    public void switchCamera(@Nullable CameraVideoCapturer.CameraSwitchHandler cameraSwitchHandler, VideoCapturer videoCapturer) {
-        if (null != cameraSwitchHandler) cameraSwitchHandler.onCameraSwitchDone(true);
     }
 
     public boolean hasCapturer() {
